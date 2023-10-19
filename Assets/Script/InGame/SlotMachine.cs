@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class SlotMachine : MonoBehaviour
 {
+    [SerializeField] GameObject testButtons;
     int timesSpinning
     {
         get => PlayerPrefs.GetInt("TIME_SPININNG_KEY", 0);
@@ -22,6 +23,7 @@ public class SlotMachine : MonoBehaviour
     ReelData[] reelResultsArray;
     private void Start()
     {
+        testButtons.SetActive(false);
         reelsArray = GetComponentsInChildren<Reel>();
     }
     private void OnEnable()
