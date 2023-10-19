@@ -15,7 +15,25 @@ MonoBehaviour:
   SFX_AudioDataArray:
   - AudioType: 1
     ClipsArray:
-    - {fileID: 8300000, guid: 32d4b1811dda14a6cb9e059ee8ad17d2, type: 3}
+    - {fileID: 8300000, guid: f9ffcc8ae213a894a9be268dba313cb4, type: 3}
     IsOrderd: 0
     Volume: 1
     Effect: 1
+  - AudioType: 1
+    ClipsArray:
+    - {fileID: 8300000, guid: 8ee15bf9144e8794397165f06e468b7b, type: 3}
+    IsOrderd: 0
+    Volume: 1
+    Effect: 2
+  - AudioType: 1
+    ClipsArray:
+    - {fileID: 8300000, guid: 6becc916aeff4b947b802236c0162eec, type: 3}
+    IsOrderd: 0
+    Volume: 1
+    Effect: 4
+  - AudioType: 1
+    ClipsArray:
+    - {fileID: 8300000, guid: e3ef4b31ccb00f74aaa02ebc8e364568, type: 3}
+    IsOrderd: 0
+    Volume: 1
+    Effect: 3

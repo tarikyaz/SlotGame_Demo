@@ -10,8 +10,6 @@ public class AudioManager : MonoBehaviour
     [SerializeField] AudioSettings audioSettings;
 
 
-
-
     private void OnEnable()
     {
         BaseEvents.OnSoundPlay += OnPlaySound;
@@ -62,10 +60,9 @@ public class AudioManager : MonoBehaviour
         }
         int clipIndex = audioData.IsOrderd ? audioData.CurrentOrder++ % audioData.ClipsArray.Length : UnityEngine.Random.Range(0, audioData.ClipsArray.Length);
         AudioClip clip = audioData.ClipsArray[clipIndex];
+        //Debug.Log("Playing clip " + clip.name);
         switch (audioData.AudioType)
         {
-            case AudioTypeEnum.None:
-                break;
             case AudioTypeEnum.SFX:
                 sfx_AudioSource.clip = clip;
                 sfx_AudioSource.Play();
@@ -78,6 +75,7 @@ public class AudioManager : MonoBehaviour
                 sfx_AudioSource.PlayOneShot(clip);
                 break;
             default:
+                sfx_AudioSource.PlayOneShot(clip);
                 break;
         }
     }
@@ -94,5 +92,8 @@ public class AudioManager : MonoBehaviour
 public enum SoundEffectsEnum
 {
     None,
-    Ding
+    Ding,
+    Click,
+    Win,
+    Lose
 }

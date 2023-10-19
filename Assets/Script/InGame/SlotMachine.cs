@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class SlotMachine : MonoBehaviour
@@ -10,6 +12,8 @@ public class SlotMachine : MonoBehaviour
         set => PlayerPrefs.SetInt("TIME_SPININNG_KEY", value);
     }
     Reel[] reelsArray;
+    bool isRoling => reelsArray.Any(x => x.isRoling);
+    Coroutine waitForFinish;
     private void Start()
     {
         reelsArray = GetComponentsInChildren<Reel>();
@@ -25,18 +29,43 @@ public class SlotMachine : MonoBehaviour
 
     private void OnSlotButtonClickHandler(int index)
     {
-        timesSpinning++;
-        Debug.Log("b_index " + index);
-        GetResult( out var isWin);
-        Debug.Log("a_index " + index);
-        foreach (var reel in reelsArray)
+        if (!isRoling)
         {
-            if (!isWin)
+            if (waitForFinish != null)
             {
-                index = GetDifferentIndex(index);
+                StopCoroutine(waitForFinish);
             }
-            reel.RoleToIndex(index);
+            BaseEvents.CallSoundPlay(SoundEffectsEnum.Click);
+            timesSpinning++;
+            Debug.Log("b_index " + index);
+            GetResult(out var isWin);
+            Debug.Log("a_index " + index);
+            foreach (var reel in reelsArray)
+            {
+                if (!isWin)
+                {
+                    index = GetDifferentIndex(index);
+                }
+                reel.RoleToIndex(index);
+            }
+            waitForFinish = StartCoroutine(WaitForAllFinishRoling(() =>
+            {
+                if (isWin)
+                {
+                    BaseEvents.CallSoundPlay(SoundEffectsEnum.Win);
+                }
+                else
+                {
+                    BaseEvents.CallSoundPlay(SoundEffectsEnum.Lose);
+                }
+
+            }));
         }
+    }
+    IEnumerator WaitForAllFinishRoling(Action onComplete)
+    {
+        yield return new WaitUntil(() => isRoling == false);
+        onComplete?.Invoke();
     }
     private void GetResult(out bool isWin)
     {

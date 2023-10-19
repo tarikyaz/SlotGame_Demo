@@ -13,6 +13,7 @@ public class Reel : MonoBehaviour
     float lastItemPos => 1 - itemSize;
     Material material;
     Tween rolingTween;
+    internal bool isRoling;
     private void Start()
     {
         material = Instantiate(img.material);
@@ -22,6 +23,7 @@ public class Reel : MonoBehaviour
 
     public void RoleToIndex(int index)
     {
+        isRoling = true;
         int number = index + 1;
         int pushes = UnityEngine.Random.Range(0, 3);
         rolingTween.Pause();
@@ -61,6 +63,11 @@ public class Reel : MonoBehaviour
                 isDing = !isDing;
             }
 
-        }).SetEase(animationCurve).SetSpeedBased();
+        }).OnComplete(() =>
+        {
+            isRoling = false;
+        })
+            .SetEase(animationCurve)
+            .SetSpeedBased();
     }
 }

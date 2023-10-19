@@ -22,7 +22,7 @@ public class AudioSettings : ScriptableObject
     [Serializable]
     public class SFX_AudioData : AudioData
     {
-        public SoundEffectsEnum Effect = SoundEffectsEnum.None;
+        public SoundEffectsEnum Effect = SoundEffectsEnum.None;   
     }
 
     public SFX_AudioData[] SFX_AudioDataArray = new SFX_AudioData[0];

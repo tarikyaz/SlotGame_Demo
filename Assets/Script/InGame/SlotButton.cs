@@ -12,7 +12,6 @@ public class SlotButton : MonoBehaviour
         btn = GetComponent<Button>();
         btn.onClick.AddListener(() =>
         {
-            Debug.Log("Click");
             OnClick?.Invoke(index);
         });
     }
