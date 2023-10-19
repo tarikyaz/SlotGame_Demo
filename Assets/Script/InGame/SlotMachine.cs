@@ -14,6 +14,12 @@ public class SlotMachine : MonoBehaviour
     Reel[] reelsArray;
     bool isRoling => reelsArray.Any(x => x.isRoling);
     Coroutine waitForFinish;
+    [Serializable]
+    struct ReelData
+    {
+        public int reelIndex, reelValue;
+    }
+    ReelData[] reelResultsArray;
     private void Start()
     {
         reelsArray = GetComponentsInChildren<Reel>();
@@ -31,23 +37,31 @@ public class SlotMachine : MonoBehaviour
     {
         if (!isRoling)
         {
+            reelResultsArray = new ReelData[reelsArray.Length];
             if (waitForFinish != null)
             {
                 StopCoroutine(waitForFinish);
             }
             BaseEvents.CallSoundPlay(SoundEffectsEnum.Click);
             timesSpinning++;
-            Debug.Log("b_index " + index);
             GetResult(out var isWin);
-            Debug.Log("a_index " + index);
-            foreach (var reel in reelsArray)
+            for (int i = 0; i < reelsArray.Length; i++)
             {
+                Reel reel = reelsArray[i];
                 if (!isWin)
                 {
                     index = GetDifferentIndex(index);
                 }
                 reel.RoleToIndex(index);
+                reelResultsArray[i] = new ReelData
+                {
+                    
+                    reelIndex = reel.index,
+                    reelValue = index
+                };
             }
+            bool hasDuplicates = reelResultsArray.GroupBy(x => x.reelValue)
+                           .Any(group => group.Count() > 1);
             waitForFinish = StartCoroutine(WaitForAllFinishRoling(() =>
             {
                 if (isWin)
@@ -57,6 +71,16 @@ public class SlotMachine : MonoBehaviour
                 else
                 {
                     BaseEvents.CallSoundPlay(SoundEffectsEnum.Lose);
+                }
+                if (hasDuplicates)
+                {
+                    foreach (var group in reelResultsArray.GroupBy(x => x.reelValue).Where(x => x.Count() > 1))
+                    {
+                        foreach (var reelData in group)
+                        {
+                            reelsArray[reelData.reelIndex].SetColor(Color.red);
+                        }
+                    }
                 }
 
             }));
@@ -69,7 +93,6 @@ public class SlotMachine : MonoBehaviour
     }
     private void GetResult(out bool isWin)
     {
-        Debug.Log("timesSpinning " + timesSpinning);
 
         /* Winning logic:
          * 

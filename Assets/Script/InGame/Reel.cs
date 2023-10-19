@@ -1,10 +1,12 @@
 using DG.Tweening;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 public class Reel : MonoBehaviour
 {
-    [SerializeField] Image img;
+    [SerializeField] Image icon, backGround;
     [SerializeField] AnimationCurve animationCurve;
+    internal Action OnFinishRoling;
     float valueY;
     float itemSize = .1f;
     int itemsCount = 9;
@@ -14,18 +16,23 @@ public class Reel : MonoBehaviour
     Material material;
     Tween rolingTween;
     internal bool isRoling;
+    internal int index { get; private set; }
+    Tween coloringTween;
     private void Start()
     {
-        material = Instantiate(img.material);
-        img.material = material;
-
+        material = Instantiate(icon.material);
+        icon.material = material;
+        index = transform.GetSiblingIndex();
     }
 
     public void RoleToIndex(int index)
     {
         isRoling = true;
+        coloringTween.Pause();
+        coloringTween.Kill();
+        coloringTween = backGround.DOColor(new Color(0, 0, 0, 0), .5f);
         int number = index + 1;
-        int pushes = UnityEngine.Random.Range(0, 3);
+        int pushes = UnityEngine.Random.Range(1, 4);
         rolingTween.Pause();
         rolingTween.Kill();
         if (number > itemsCount || number < 1)
@@ -36,10 +43,6 @@ public class Reel : MonoBehaviour
         valueY = material.GetTextureOffset("_MainTex").y;
         float targetY = number * itemSize;
         targetY += roleSize * pushes;
-        if (targetY <= valueY)
-        {
-            targetY += roleSize;
-        }
         float prevYPos = currentYPos;
         bool isDing = false;
         rolingTween = DOTween.To(() => valueY, x => valueY = x, targetY, .2f)
@@ -65,9 +68,16 @@ public class Reel : MonoBehaviour
 
         }).OnComplete(() =>
         {
+            OnFinishRoling?.Invoke();
             isRoling = false;
         })
             .SetEase(animationCurve)
             .SetSpeedBased();
+    }
+    public void SetColor(Color color)
+    {
+        coloringTween.Pause();
+        coloringTween.Kill();
+        coloringTween = backGround.DOColor(color, .5f).From(new Color(0, 0, 0, 0)).SetLoops(3);
     }
 }
