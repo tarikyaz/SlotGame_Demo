@@ -4,7 +4,6 @@ using UnityEngine.UI;
 public class Reel : MonoBehaviour
 {
     [SerializeField] Image img;
-    [SerializeField] int number;
     [SerializeField] AnimationCurve animationCurve;
     float valueY;
     float itemSize = .1f;
@@ -20,10 +19,11 @@ public class Reel : MonoBehaviour
         img.material = material;
 
     }
-    [ContextMenu("Test")]
-    void RoleToIndex()
+
+    public void RoleToIndex(int index)
     {
-        int pushes = 2;
+        int number = index + 1;
+        int pushes = UnityEngine.Random.Range(0, 3);
         rolingTween.Pause();
         rolingTween.Kill();
         if (number > itemsCount || number < 1)
@@ -33,14 +33,14 @@ public class Reel : MonoBehaviour
         }
         valueY = material.GetTextureOffset("_MainTex").y;
         float targetY = number * itemSize;
-        if (targetY < valueY)
+        targetY += roleSize * pushes;
+        if (targetY <= valueY)
         {
             targetY += roleSize;
         }
-        targetY += roleSize * pushes;
         float prevYPos = currentYPos;
         bool isDing = false;
-        rolingTween = DOTween.To(() => valueY, x => valueY = x, targetY, 15)
+        rolingTween = DOTween.To(() => valueY, x => valueY = x, targetY, .2f)
             .OnUpdate(() =>
         {
             float fixedValued = valueY;
@@ -61,6 +61,6 @@ public class Reel : MonoBehaviour
                 isDing = !isDing;
             }
 
-        }).SetEase(animationCurve);
+        }).SetEase(animationCurve).SetSpeedBased();
     }
 }

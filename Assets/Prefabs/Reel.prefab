@@ -89,36 +89,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   img: {fileID: 4316062796015807942}
-  number: 0
   animationCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
       value: 0
-      inSlope: 0.0365108
-      outSlope: 0.0365108
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0.23387982
+      outWeight: 0
     - serializedVersion: 3
-      time: 0.796285
-      value: 0.028560221
-      inSlope: 3.2957618
-      outSlope: 3.2957618
+      time: 0.92270124
+      value: 0.994025
+      inSlope: 0.15459728
+      outSlope: 0.15459728
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
-      outWeight: 0.22284554
+      outWeight: 0.33333334
     - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0
-      outSlope: 0
+      inSlope: -2.363545
+      outSlope: -2.363545
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0
+      inWeight: 0.41387492
       outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
