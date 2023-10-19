@@ -8,11 +8,10 @@ public class Reel : MonoBehaviour
     [SerializeField] AnimationCurve animationCurve;
     internal Action OnFinishRoling;
     float valueY;
-    float itemSize = .1f;
+    float itemSize = (float)(1f / 12f);
     int itemsCount = 9;
     float currentYPos => material.GetTextureOffset("_MainTex").y;
-    float roleSize => itemSize * itemsCount;
-    float lastItemPos => 1 - itemSize;
+    float lastItemPos => 0.75f;
     Material material;
     Tween rolingTween;
     internal bool isRoling;
@@ -24,28 +23,26 @@ public class Reel : MonoBehaviour
         icon.material = material;
         index = transform.GetSiblingIndex();
     }
-
     public void RoleToIndex(int index)
     {
         isRoling = true;
         coloringTween.Pause();
         coloringTween.Kill();
         coloringTween = backGround.DOColor(new Color(0, 0, 0, 0), .5f);
-        int number = index + 1;
         int pushes = UnityEngine.Random.Range(1, 4);
         rolingTween.Pause();
         rolingTween.Kill();
-        if (number > itemsCount || number < 1)
+        if (index > itemsCount - 1 || index < 0)
         {
-            Debug.LogError("no possible index " + number);
+            Debug.LogError("no possible index " + index);
             return;
         }
         valueY = material.GetTextureOffset("_MainTex").y;
-        float targetY = number * itemSize;
-        targetY += roleSize * pushes;
+        float targetY = index * itemSize;
+        targetY += pushes * itemsCount * itemSize;
         float prevYPos = currentYPos;
         bool isDing = false;
-        rolingTween = DOTween.To(() => valueY, x => valueY = x, targetY, .2f)
+        rolingTween = DOTween.To(() => valueY, x => valueY = x, targetY, 1.5f)
             .OnUpdate(() =>
         {
             float fixedValued = valueY;
