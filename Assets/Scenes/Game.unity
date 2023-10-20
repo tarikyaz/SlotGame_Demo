@@ -1219,10 +1219,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1593176306510218943, guid: d748c66cede370543b65585f33b96e3c, type: 3}
-      propertyPath: m_text
-      value: Out of coins ! Get more !
-      objectReference: {fileID: 0}
     - target: {fileID: 2359848133391765758, guid: d748c66cede370543b65585f33b96e3c, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1250,22 +1246,6 @@ PrefabInstance:
     - target: {fileID: 3916510420513111354, guid: d748c66cede370543b65585f33b96e3c, type: 3}
       propertyPath: m_Name
       value: SlotMachine
-      objectReference: {fileID: 0}
-    - target: {fileID: 5361148247866404373, guid: d748c66cede370543b65585f33b96e3c, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: -10
-      objectReference: {fileID: 0}
-    - target: {fileID: 5361148247866404373, guid: d748c66cede370543b65585f33b96e3c, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: -10
-      objectReference: {fileID: 0}
-    - target: {fileID: 5361148247866404373, guid: d748c66cede370543b65585f33b96e3c, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5361148247866404373, guid: d748c66cede370543b65585f33b96e3c, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7310853933515572486, guid: d748c66cede370543b65585f33b96e3c, type: 3}
       propertyPath: m_SizeDelta.x

@@ -94,6 +94,7 @@ public enum SoundEffectsEnum
     None,
     Ding,
     Click,
-    Win,
-    Lose
+    Win3,
+    Lose,
+    Win2
 }

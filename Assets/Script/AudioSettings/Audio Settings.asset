@@ -37,3 +37,9 @@ MonoBehaviour:
     IsOrderd: 0
     Volume: 1
     Effect: 3
+  - AudioType: 1
+    ClipsArray:
+    - {fileID: 8300000, guid: 05bf3c6236172d74cb0c3d6f21765275, type: 3}
+    IsOrderd: 0
+    Volume: 1
+    Effect: 5

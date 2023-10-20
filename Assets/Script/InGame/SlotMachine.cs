@@ -143,19 +143,22 @@ public class SlotMachine : MonoBehaviour
                 {
 
                     wonAmount = betAmount * 3;
-                    BaseEvents.CallSoundPlay(SoundEffectsEnum.Win);
+                    BaseEvents.CallSoundPlay(SoundEffectsEnum.Win3);
                 }
                 else
                 {
                     if (hasDuplicates)
                     {
+                        BaseEvents.CallSoundPlay(SoundEffectsEnum.Win2);
+
                         wonAmount = betAmount * 2;
                     }
                     else
                     {
+                        BaseEvents.CallSoundPlay(SoundEffectsEnum.Lose);
+
                         wonAmount = 0;
                     }
-                    BaseEvents.CallSoundPlay(SoundEffectsEnum.Lose);
                 }
                 resultMsg_Text.text = $"You won {wonAmount} coins !";
                 result_UI.SetActive(true);
