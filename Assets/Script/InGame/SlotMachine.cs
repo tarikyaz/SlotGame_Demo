@@ -2,19 +2,22 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
-
+using UnityEngine.UI;
+using static DataManager;
 public class SlotMachine : MonoBehaviour
 {
-    [SerializeField] GameObject testButtons;
-    int timesSpinning
-    {
-        get => PlayerPrefs.GetInt("TIME_SPININNG_KEY", 0);
-        set => PlayerPrefs.SetInt("TIME_SPININNG_KEY", value);
-    }
+    [SerializeField] GameObject testButtons, spining_UI, bet_UI, addCoins_UI, result_UI;
+    [SerializeField] TMP_Text coinsAmount_Text, resultMsg_Text;
+    [SerializeField] Button Spin_Button;
+    [SerializeField] TMP_InputField betAmount_Input, amountToAdd_Input;
     Reel[] reelsArray;
     bool isRoling => reelsArray.Any(x => x.isRoling);
     Coroutine waitForFinish;
+    int betAmount => int.Parse(betAmount_Input.text);
+    int amountToAdd => int.Parse(amountToAdd_Input.text);
+    int lastIndex = -1;
     [Serializable]
     struct ReelData
     {
@@ -24,28 +27,96 @@ public class SlotMachine : MonoBehaviour
     private void Start()
     {
         testButtons.SetActive(false);
+#if !UNITY_EDITOR
+        Destroy(testButtons);
+#endif
         reelsArray = GetComponentsInChildren<Reel>();
+        coinsAmount_Text.text = $"{CurrentCoinsAmount} Coins";
+        RestMachineToSetUI();
+        Spin_Button.onClick.AddListener(() =>
+        {
+            if (betAmount <=0)
+            {
+                return;
+            }
+            bet_UI.SetActive(false);
+            if (TrySpendCoin(betAmount))
+            {
+                Spin();
+            }
+            else
+            {
+                addCoins_UI.SetActive(true);
+            }
+        });
+        betAmount_Input.onValueChanged.AddListener((v) => {
+            if (string.IsNullOrEmpty(betAmount_Input.text) || betAmount <= 0)
+            {
+                betAmount_Input.text = "1";
+            }
+        });
+
+        amountToAdd_Input.onValueChanged.AddListener((v) => {
+            if (string.IsNullOrEmpty(betAmount_Input.text) || amountToAdd <= 0)
+            {
+                amountToAdd_Input.text = "1";
+            }
+        });
     }
+    public void AddCoinsCall()
+    {
+        AddCoins(amountToAdd);
+    }
+    public void RestMachineToSetUI()
+    {
+        amountToAdd_Input.text = "1";
+        betAmount_Input.text = "1";
+        result_UI.SetActive(false);
+        spining_UI.SetActive(false);
+        bet_UI.SetActive(true);
+        addCoins_UI.SetActive(false);
+    }
+
     private void OnEnable()
     {
+#if UNITY_EDITOR
         SlotButton.OnClick += OnSlotButtonClickHandler;
+#endif
+        BaseEvents.OnCoinsAmountChange += OnCoinsAmountChangeHandler;
     }
     private void OnDisable()
     {
+#if UNITY_EDITOR
         SlotButton.OnClick -= OnSlotButtonClickHandler;
+#endif
+        BaseEvents.OnCoinsAmountChange += OnCoinsAmountChangeHandler;
+
+    }
+
+    private void OnCoinsAmountChangeHandler(int value)
+    {
+        coinsAmount_Text.text = $"{value} Coins";
+    }
+    void Spin()
+    {
+
+            OnSlotButtonClickHandler(GetDifferentIndex(lastIndex));
+
     }
 
     private void OnSlotButtonClickHandler(int index)
     {
         if (!isRoling)
         {
+            lastIndex = index;
+            spining_UI.SetActive(true);
             reelResultsArray = new ReelData[reelsArray.Length];
             if (waitForFinish != null)
             {
                 StopCoroutine(waitForFinish);
             }
             BaseEvents.CallSoundPlay(SoundEffectsEnum.Click);
-            timesSpinning++;
+            TimesSpinning++;
             GetResult(out var isWin);
             for (int i = 0; i < reelsArray.Length; i++)
             {
@@ -57,7 +128,7 @@ public class SlotMachine : MonoBehaviour
                 reel.RoleToIndex(index);
                 reelResultsArray[i] = new ReelData
                 {
-                    
+
                     reelIndex = reel.index,
                     reelValue = index
                 };
@@ -66,14 +137,29 @@ public class SlotMachine : MonoBehaviour
                            .Any(group => group.Count() > 1);
             waitForFinish = StartCoroutine(WaitForAllFinishRoling(() =>
             {
+                int wonAmount;
+
                 if (isWin)
                 {
+
+                    wonAmount = betAmount * 3;
                     BaseEvents.CallSoundPlay(SoundEffectsEnum.Win);
                 }
                 else
                 {
+                    if (hasDuplicates)
+                    {
+                        wonAmount = betAmount * 2;
+                    }
+                    else
+                    {
+                        wonAmount = 0;
+                    }
                     BaseEvents.CallSoundPlay(SoundEffectsEnum.Lose);
                 }
+                resultMsg_Text.text = $"You won {wonAmount} coins !";
+                result_UI.SetActive(true);
+                AddCoins(wonAmount);
                 if (hasDuplicates)
                 {
                     foreach (var group in reelResultsArray.GroupBy(x => x.reelValue).Where(x => x.Count() > 1))
@@ -107,7 +193,7 @@ public class SlotMachine : MonoBehaviour
 
          */
 
-        switch (timesSpinning)
+        switch (TimesSpinning)
         {
             case 1:
                 isWin = false;
@@ -132,9 +218,9 @@ public class SlotMachine : MonoBehaviour
         if (!isWin)
         {
             // If there is no win, let it spin to a random value but not the one the player's bet
-            if (timesSpinning > 15)
+            if (TimesSpinning > 15)
             {
-                timesSpinning = 0;
+                TimesSpinning = 0;
             }
         }
     }
