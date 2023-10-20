@@ -12,6 +12,7 @@ public class SlotMachine : MonoBehaviour
     [SerializeField] TMP_Text coinsAmount_Text, resultMsg_Text;
     [SerializeField] Button Spin_Button;
     [SerializeField] TMP_InputField betAmount_Input, amountToAdd_Input;
+    [SerializeField] int[] indexesValueArray = new int[9];
     Reel[] reelsArray;
     bool isRoling => reelsArray.Any(x => x.isRoling);
     Coroutine waitForFinish;
@@ -108,7 +109,9 @@ public class SlotMachine : MonoBehaviour
     {
         if (!isRoling)
         {
+
             lastIndex = index;
+            Debug.Log("Index " + index);
             spining_UI.SetActive(true);
             reelResultsArray = new ReelData[reelsArray.Length];
             if (waitForFinish != null)
@@ -138,11 +141,11 @@ public class SlotMachine : MonoBehaviour
             waitForFinish = StartCoroutine(WaitForAllFinishRoling(() =>
             {
                 int wonAmount;
-
+                string calculateStr = "";
                 if (isWin)
                 {
-
-                    wonAmount = betAmount * 3;
+                    calculateStr += $"{betAmount} X {3} X {indexesValueArray[index]}\n";
+                    wonAmount = betAmount * 3 * indexesValueArray[index];
                     BaseEvents.CallSoundPlay(SoundEffectsEnum.Win3);
                 }
                 else
@@ -150,8 +153,9 @@ public class SlotMachine : MonoBehaviour
                     if (hasDuplicates)
                     {
                         BaseEvents.CallSoundPlay(SoundEffectsEnum.Win2);
+                        calculateStr += $"{betAmount} X {2} X {indexesValueArray[index]}\n";
 
-                        wonAmount = betAmount * 2;
+                        wonAmount = betAmount * 2 * indexesValueArray[index];
                     }
                     else
                     {
@@ -160,7 +164,7 @@ public class SlotMachine : MonoBehaviour
                         wonAmount = 0;
                     }
                 }
-                resultMsg_Text.text = $"You won {wonAmount} coins !";
+                resultMsg_Text.text = calculateStr + $"You won {wonAmount} coins !";
                 result_UI.SetActive(true);
                 AddCoins(wonAmount);
                 if (hasDuplicates)
